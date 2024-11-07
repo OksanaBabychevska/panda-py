@@ -29,7 +29,7 @@ pipeline {
 
                         sh 'docker-compose up -d'
                         
-                        def containerId = sh(script: "docker ps -qf \'name=${DOCKER_IMAGE}\'", returnStdout: true).trim()
+                        def containerId = sh(script: 'docker ps -qf name=${DOCKER_IMAGE}', returnStdout: true).trim()
                         
                         sh 'docker exec ${containerId} python /app/test_app.py'
                     }
