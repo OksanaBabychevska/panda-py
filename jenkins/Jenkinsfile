@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'temperature_app_image'
+        DOCKER_IMAGE = 'temperature_app'
         REPO_URL = 'https://github.com/OksanaBabychevska/panda-py.git'
     }
 

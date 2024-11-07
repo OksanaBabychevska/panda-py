@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s  
+
+scrape_configs:
+  - job_name: 'temperature_app' 
+    static_configs:
+      - targets: ['temperature_app:8000'] 
+      
+rule_files:
+  - "alert.rules.yml"  
+
