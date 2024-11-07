@@ -24,14 +24,20 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    sh 'docker-compose up -d'
-                    def containerId = sh(script: "docker ps -qf \"name=temperature_app\"", returnStdout: true).trim()
-                    sh "docker exec ${containerId} python /app/test_app.py"
+                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        sh 'docker-compose up -d'
+                        
+                        def containerId = sh(script: "docker ps -qf \"name=temperature_app\"", returnStdout: true).trim()
+                        sh "docker exec ${containerId} python /app/test_app.py"
+                    }
                 }
             }
         }
 
         stage('Deploy to Production') {
+            when {
+                expression { return currentBuild.result == 'SUCCESS' }
+            }
             steps {
                 script {
                     sh 'docker-compose -f docker-compose.prod.yml up -d'
