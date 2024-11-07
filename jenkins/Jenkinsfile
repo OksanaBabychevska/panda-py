@@ -3,21 +3,22 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'temperature_app'
-        REPO_URL = 'https://github.com/OksanaBabychevska/panda-py.git'
+        REPO_URL = 'https://github.com/OksanaBabychevska/panda-py'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                    checkout scmGit(branches: [[name: 'main']], 
-                    userRemoteConfigs: [[url: 'https://github.com/OksanaBabychevska/panda-py']])
+                checkout scmGit(branches: [[name: 'main']], 
+                    userRemoteConfigs: [[url: REPO_URL]])
             }
         }
 
         stage('Build') {
             steps {
                 script {
-                     sh 'docker build temperature_app .'
+                    sh 'docker build -t ${DOCKER_IMAGE} .'
+                }
             }
         }
 
@@ -25,9 +26,11 @@ pipeline {
             steps {
                 script {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+
                         sh 'docker-compose up -d'
                         
-                        def containerId = sh(script: "docker ps -qf \"name=temperature_app\"", returnStdout: true).trim()
+                        def containerId = sh(script: "docker ps -qf \"name=${DOCKER_IMAGE}\"", returnStdout: true).trim()
+                        
                         sh "docker exec ${containerId} python /app/test_app.py"
                     }
                 }
@@ -48,6 +51,7 @@ pipeline {
         stage('Teardown') {
             steps {
                 script {
+
                     sh 'docker-compose down --volumes --remove-orphans'
                 }
             }
@@ -56,7 +60,6 @@ pipeline {
 
     post {
         always {
-            cleanWs()
-        }
+            cleanWs() 
     }
 }
