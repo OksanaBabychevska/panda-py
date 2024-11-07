@@ -9,15 +9,15 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                   git branch: 'main', url: 'https://github.com/OksanaBabychevska/panda-py.git'
+                    checkout scmGit(branches: [[name: 'main']], 
+                    userRemoteConfigs: [[url: 'https://github.com/OksanaBabychevska/panda-py']])
             }
         }
 
         stage('Build') {
             steps {
                 script {
-                    docker.build(DOCKER_IMAGE)
-                }
+                    docker.build temperature_app .
             }
         }
 
