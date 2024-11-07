@@ -1,0 +1,8 @@
+alert: HighMemoryUsage
+expr: container_memory_usage_bytes > 500 * 1024 * 1024
+for: 5m
+labels:
+  severity: "warning"
+annotations:
+  summary: "High memory usage detected in container"
+  description: "Memory usage is above 500MB for more than 5 minutes."
