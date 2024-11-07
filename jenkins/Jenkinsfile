@@ -17,7 +17,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    docker.build temperature_app .
+                     sh 'docker build temperature_app .'
             }
         }
 
