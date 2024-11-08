@@ -41,9 +41,12 @@ pipeline {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         if (isUnix()) {
                                sh 'docker-compose up -d'
+                               sh 'docker-compose ps -a'
+
                                 sh "docker exec ${DOCKER_IMAGE} python /app/test_app.py"
                             } else {
                                 bat 'docker-compose up -d'
+                                bat 'docker-compose ps -a'
                                 bat "docker exec ${DOCKER_IMAGE} python /app/test_app.py"
                         } 
                             }
@@ -59,9 +62,9 @@ pipeline {
                 script {
                     // Deploy to production using the production docker-compose file
                     if (isUnix()) {
-                        sh 'docker-compose -f docker-compose.prod.yml up -d'  // Linux command
+                        sh 'docker-compose up -d'  // Linux command
                     } else {
-                        bat 'docker-compose -f docker-compose.prod.yml up -d'  // Windows command
+                        bat 'docker-compose up -d'  // Windows command
                     }
                 }
             }
