@@ -14,21 +14,21 @@ pipeline {
                     userRemoteConfigs: [[url: REPO_URL]])
             }
         }
-        stage('Stop Existing Containers') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh 'docker-compose down --volumes --remove-orphans' 
-                        sh 'docker rmi $(docker images -q) || true'
-                    } else {
-                        bat 'docker-compose down --volumes --remove-orphans' 
-                        bat '''
-                            for /f "tokens=*" %%i in ('docker images -q') do docker rmi %%i
-                            '''  
-                    }
-                }
-            }
-        }
+        // stage('Stop Existing Containers') {
+        //     steps {
+        //         script {
+        //             if (isUnix()) {
+        //                 sh 'docker-compose down --volumes --remove-orphans' 
+        //                 sh 'docker rmi $(docker images -q) || true'
+        //             } else {
+        //                 bat 'docker-compose down --volumes --remove-orphans' 
+        //                 bat '''
+        //                     for /f "tokens=*" %%i in ('docker images -q') do docker rmi %%i
+        //                     '''  
+        //             }
+        //         }
+        //     }
+        // }
         stage('Build') {
             steps {
                 script {
