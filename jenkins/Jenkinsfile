@@ -17,7 +17,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh (script:docker build -t [[DOCKER_IMAGE]] .)
+                    sh "docker build -t ${DOCKER_IMAGE} ."
                 }
             }
         }
@@ -26,12 +26,14 @@ pipeline {
             steps {
                 script {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        // Start the containers using docker-compose
+                        sh 'docker-compose up -d'
 
-                        sh docker-compose up -d
-                        
-                        def containerId = sh(script: docker ps -qf name=[[DOCKER_IMAGE]], returnStdout: true).trim()
-                        
-                        sh 'docker exec ${containerId} python /app/test_app.py'
+                        // Get the container ID for the temperature_app container
+                        def containerId = sh(script: "docker ps -qf 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()
+
+                        // Run tests inside the temperature_app container
+                        sh "docker exec ${containerId} python /app/test_app.py"
                     }
                 }
             }
@@ -43,7 +45,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh docker-compose -f docker-compose.prod.yml up -d
+                    sh 'docker-compose -f docker-compose.prod.yml up -d'
                 }
             }
         }
@@ -51,8 +53,7 @@ pipeline {
         stage('Teardown') {
             steps {
                 script {
-
-                    sh docker-compose down --volumes --remove-orphans
+                    sh 'docker-compose down --volumes --remove-orphans'
                 }
             }
         }
@@ -61,5 +62,6 @@ pipeline {
     post {
         always {
             cleanWs() 
+        }
     }
 }

@@ -1,0 +1,45 @@
+version: '3'
+services:
+  temperature_app:
+    build: .                        
+    ports:
+      - "5000:5000"                 
+      - "8000:8000"                 
+    environment:
+      - FLASK_ENV=development   
+      - FLASK_PORT=5000
+      - METRICS_PORT=8000      
+    depends_on:
+      - prometheus                   
+      - grafana                      
+    networks:
+      - monitoring                   
+    restart: always                  
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml 
+    ports:
+      - "9090:9090"                 
+    networks:
+      - monitoring                   
+    restart: always                  
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"                
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin   
+    depends_on:
+      - prometheus                   
+    networks:
+      - monitoring                   
+    restart: always                  
+
+               
+
+networks:
+  monitoring:
+    driver: bridge
