@@ -20,12 +20,20 @@ services:
     image: prom/prometheus
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml 
+      - ./monitoring/alerts.rules.yml:/etc/prometheus/alerts.rules.yml
     ports:
       - "9090:9090"                 
     networks:
       - monitoring                   
     restart: always                  
-
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    restart: always
+    networks:
+      - monitoring
+    ports:
+      - "9100:9100"
   grafana:
     image: grafana/grafana
     ports:
