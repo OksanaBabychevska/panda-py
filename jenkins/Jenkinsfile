@@ -43,8 +43,7 @@ pipeline {
                                sh 'docker-compose up -d'
                                sh 'docker-compose ps -a'
                                sh 'docker logs temperature_app'
-
-                                sh "docker exec ${DOCKER_IMAGE} python /app/test_app.py"
+                               sh "docker exec ${DOCKER_IMAGE} python /app/test_app.py"
                             } else {
                                 bat 'docker-compose up -d'
                                 bat 'docker-compose ps -a'
