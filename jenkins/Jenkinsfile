@@ -22,7 +22,9 @@ pipeline {
                         sh 'docker rmi $(docker images -q) || true'
                     } else {
                         bat 'docker-compose down --volumes --remove-orphans'  // Windows command
-                        bat 'docker rmi $(docker images -q) || true'
+                        bat '''
+                for /f "tokens=*" %%i in ('docker images -q') do docker rmi %%i
+                '''  
                     }
                 }
             }
