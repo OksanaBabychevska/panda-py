@@ -18,13 +18,13 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'docker-compose down --volumes --remove-orphans'  // Linux command
+                        sh 'docker-compose down --volumes --remove-orphans' 
                         sh 'docker rmi $(docker images -q) || true'
                     } else {
-                        bat 'docker-compose down --volumes --remove-orphans'  // Windows command
+                        bat 'docker-compose down --volumes --remove-orphans' 
                         bat '''
-                for /f "tokens=*" %%i in ('docker images -q') do docker rmi %%i
-                '''  
+                            for /f "tokens=*" %%i in ('docker images -q') do docker rmi %%i
+                            '''  
                     }
                 }
             }
@@ -32,18 +32,10 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // List the contents of the workspace (for debugging)
                     if (isUnix()) {
-                        sh 'ls -l'  // Linux command
+                        sh "docker build -t ${DOCKER_IMAGE} ."  
                     } else {
-                        bat 'dir'  // Windows command
-                    }
-
-                    // Build the Docker image with the tag 'temperature_app'
-                    if (isUnix()) {
-                        sh "docker build -t ${DOCKER_IMAGE} ."  // Linux command
-                    } else {
-                        bat "docker build -t ${DOCKER_IMAGE} ."  // Windows command
+                        bat "docker build -t ${DOCKER_IMAGE} ."
                     }
                 }
             }

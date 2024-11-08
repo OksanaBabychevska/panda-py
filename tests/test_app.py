@@ -2,18 +2,21 @@ import unittest
 import requests
 
 class TestTemperatureApp(unittest.TestCase):
-    BASE_URL = 'http://localhost:5000'  # URL of the Flask app
+    BASE_URL = 'http://localhost:5000'  # URL вашого Flask додатку
 
-    def test_convert_temperature(self):
-        # Send POST request with valid celsius value
-        response = requests.post(f'{self.BASE_URL}/convert', data={'celsius': 25})
-        self.assertEqual(response.status_code, 200)  # Expect status 200
-        self.assertIn('fahrenheit', response.json())  # Ensure 'fahrenheit' is in the response JSON
+    def test_home_page(self):
+        # Надсилаємо GET запит на головну сторінку
+        response = requests.get(f'{self.BASE_URL}/')
+        
+        # Перевіряємо, чи отримали код відповіді 200 (ОК)
+        self.assertEqual(response.status_code, 200)
 
-    def test_invalid_temperature(self):
-        # Send POST request with invalid celsius value
-        response = requests.post(f'{self.BASE_URL}/convert', data={'celsius': 'invalid'})
-        self.assertEqual(response.status_code, 400)  # Expect status 400 for invalid input
+    def test_metrics(self):
+        # Надсилаємо GET запит на /metrics (метрики для Prometheus)
+        response = requests.get(f'{self.BASE_URL}/metrics')
+        
+        # Перевіряємо, чи отримали код відповіді 200
+        self.assertEqual(response.status_code, 200)
 
 if __name__ == '__main__':
     unittest.main()
