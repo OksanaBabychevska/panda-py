@@ -42,11 +42,13 @@ pipeline {
                         if (isUnix()) {
                                sh 'docker-compose up -d'
                                sh 'docker-compose ps -a'
+                               sh 'docker logs temperature_app'
 
                                 sh "docker exec ${DOCKER_IMAGE} python /app/test_app.py"
                             } else {
                                 bat 'docker-compose up -d'
                                 bat 'docker-compose ps -a'
+                                bat 'docker logs temperature_app'
                                 bat "docker exec ${DOCKER_IMAGE} python /app/test_app.py"
                         } 
                             }
@@ -65,19 +67,6 @@ pipeline {
                         sh 'docker-compose up -d'  // Linux command
                     } else {
                         bat 'docker-compose up -d'  // Windows command
-                    }
-                }
-            }
-        }
-
-        stage('Teardown') {
-            steps {
-                script {
-                    // Shutdown and remove containers, networks, volumes, and orphans
-                    if (isUnix()) {
-                        sh 'docker-compose down --volumes --remove-orphans'  // Linux command
-                    } else {
-                        bat 'docker-compose down --volumes --remove-orphans'  // Windows command
                     }
                 }
             }
