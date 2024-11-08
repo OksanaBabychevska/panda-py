@@ -56,7 +56,7 @@ pipeline {
                                 bat 'docker-compose ps -a'
                                 bat 'docker logs temperature_app'
                                 bat "docker exec ${DOCKER_IMAGE} python /app/tests/test_app.py"
-                                sh 'docker-compose down'
+                                bat 'docker-compose down'
                         } 
                             }
                     }
