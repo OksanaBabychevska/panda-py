@@ -41,7 +41,7 @@ pipeline {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         if (isUnix()) {
                                sh 'docker-compose up -d'
-                            sh "docker exec ${DOCKER_IMAGE} python /app/test_app.py"
+                                sh "docker exec ${DOCKER_IMAGE} python /app/test_app.py"
                             } else {
                                 bat 'docker-compose up -d'
                                 bat "docker exec ${DOCKER_IMAGE} python /app/test_app.py"
@@ -50,7 +50,6 @@ pipeline {
                     }
                 }
             }
-        }
 
         stage('Deploy to Production') {
             when {
