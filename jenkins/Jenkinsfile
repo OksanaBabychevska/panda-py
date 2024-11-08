@@ -41,7 +41,7 @@ pipeline {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         if (isUnix()) {
                                sh 'docker-compose up -d' 
-                    sleep 10  // Add a delay to ensure the container has time to start
+                    sh 'sleep 10'  // Add a delay to ensure the container has time to start
                     def containerId = sh(script: "docker ps -q -f 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()
                     if (containerId) {
                         sh "docker exec ${containerId} python /app/test_app.py"
