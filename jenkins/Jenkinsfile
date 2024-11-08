@@ -65,7 +65,7 @@ pipeline {
 
         stage('Deploy to Production') {
             when {
-                expression { return currentBuild.result == 'SUCCESS' }
+                expression { return currentBuild.currentResult == 'SUCCESS' }
             }
             steps {
                 script {
