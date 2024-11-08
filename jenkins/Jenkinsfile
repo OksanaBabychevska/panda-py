@@ -52,9 +52,9 @@ pipeline {
             }
 
         stage('Deploy to Production') {
-            when {
-                expression { return currentBuild.result == 'SUCCESS' }
-            }
+            // when {
+            //     expression { return currentBuild.result == 'SUCCESS' }
+            // }
             steps {
                 script {
                     // Deploy to production using the production docker-compose file
