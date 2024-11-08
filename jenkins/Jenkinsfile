@@ -41,20 +41,11 @@ pipeline {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         if (isUnix()) {
                                sh 'docker-compose up -d'
-                    // def containerId = sh(script: "docker ps -q -f 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()
-                    // if (containerId) {
-                    //     sh "docker exec ${containerId} python /app/test_app.py"
-                    // } else {
-                    //     error "Container not running"
-                    // }
+                            sh "docker exec ${DOCKER_IMAGE} python /app/test_app.py"
                             } else {
                                 bat 'docker-compose up -d'
-                    // def containerId = bat(script: "docker ps -q -f \"name=${DOCKER_IMAGE}\"", returnStdout: true).trim()
-                    // if (containerId) {
-                    //     bat "docker exec ${containerId} python /app/test_app.py"
-                    // } else {
-                    //     error "Container not running"
-                    // }
+                                bat "docker exec ${DOCKER_IMAGE} python /app/test_app.py"
+                        } 
                             }
                     }
                 }
