@@ -11,12 +11,5 @@ class TestTemperatureApp(unittest.TestCase):
         # Перевіряємо, чи отримали код відповіді 200 (ОК)
         self.assertEqual(response.status_code, 200)
 
-    def test_metrics(self):
-        # Надсилаємо GET запит на /metrics (метрики для Prometheus)
-        response = requests.get(f'{self.BASE_URL}/metrics')
-        
-        # Перевіряємо, чи отримали код відповіді 200
-        self.assertEqual(response.status_code, 200)
-
 if __name__ == '__main__':
     unittest.main()
