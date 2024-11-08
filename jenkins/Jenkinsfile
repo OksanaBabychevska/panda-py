@@ -44,7 +44,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    catchError(stageResult: 'FAILURE') {
                         if (isUnix()) {
                                sh 'docker-compose up -d'
                                sh 'docker-compose ps -a'
