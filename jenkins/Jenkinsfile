@@ -44,11 +44,13 @@ pipeline {
                                sh 'docker-compose ps -a'
                                sh 'docker logs temperature_app'
                                sh "docker exec ${DOCKER_IMAGE} python /app/tests/test_app.py"
+                               sh 'docker-compose down'
                             } else {
                                 bat 'docker-compose up -d'
                                 bat 'docker-compose ps -a'
                                 bat 'docker logs temperature_app'
                                 bat "docker exec ${DOCKER_IMAGE} python /app/tests/test_app.py"
+                                sh 'docker-compose down'
                         } 
                             }
                     }
@@ -56,9 +58,9 @@ pipeline {
             }
 
         stage('Deploy to Production') {
-            // when {
-            //     expression { return currentBuild.result == 'SUCCESS' }
-            // }
+            when {
+                expression { return currentBuild.result == 'SUCCESS' }
+            }
             steps {
                 script {
                     // Deploy to production using the production docker-compose file
