@@ -40,13 +40,23 @@ pipeline {
                 script {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         if (isUnix()) {
-                                sh "docker-compose up -d" 
-                                def containerId = sh(script: "docker ps -q -f 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()
-                                sh "docker exec ${containerId} python /app/test_app.py"
+                               sh 'docker-compose up -d' 
+                    sleep 10  // Add a delay to ensure the container has time to start
+                    def containerId = sh(script: "docker ps -q -f 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()
+                    if (containerId) {
+                        sh "docker exec ${containerId} python /app/test_app.py"
+                    } else {
+                        error "Container not running"
+                    }
                             } else {
-                                bat "docker-compose up -d" 
-                                def containerId = bat(script: "docker ps -q -f \"name=${DOCKER_IMAGE}\"", returnStdout: true).trim()
-                                bat "docker exec ${containerId} python /app/test_app.py"
+                                bat 'docker-compose up -d'
+                    bat 'sleep 10'  // Add delay for Windows as well
+                    def containerId = bat(script: "docker ps -q -f \"name=${DOCKER_IMAGE}\"", returnStdout: true).trim()
+                    if (containerId) {
+                        bat "docker exec ${containerId} python /app/test_app.py"
+                    } else {
+                        error "Container not running"
+                    }
                             }
                     }
                 }
