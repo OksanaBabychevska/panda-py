@@ -17,7 +17,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh 'docker build -t ${DOCKER_IMAGE} .'
+                    sh docker build -t [[DOCKER_IMAGE]] .
                 }
             }
         }
@@ -27,9 +27,9 @@ pipeline {
                 script {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 
-                        sh 'docker-compose up -d'
+                        sh docker-compose up -d
                         
-                        def containerId = sh(script: 'docker ps -qf name=${DOCKER_IMAGE}', returnStdout: true).trim()
+                        def containerId = sh(script: docker ps -qf name=[[DOCKER_IMAGE]], returnStdout: true).trim()
                         
                         sh 'docker exec ${containerId} python /app/test_app.py'
                     }
@@ -43,7 +43,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'docker-compose -f docker-compose.prod.yml up -d'
+                    sh docker-compose -f docker-compose.prod.yml up -d
                 }
             }
         }
@@ -52,7 +52,7 @@ pipeline {
             steps {
                 script {
 
-                    sh 'docker-compose down --volumes --remove-orphans'
+                    sh docker-compose down --volumes --remove-orphans
                 }
             }
         }
