@@ -17,8 +17,19 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh 'ls -l'
-                    sh "docker build -t ${DOCKER_IMAGE} ."
+                    // List the contents of the workspace (for debugging)
+                    if (isUnix()) {
+                        sh 'ls -l'  // Linux command
+                    } else {
+                        bat 'dir'  // Windows command
+                    }
+
+                    // Build the Docker image with the tag 'temperature_app'
+                    if (isUnix()) {
+                        sh "docker build -t ${DOCKER_IMAGE} ."  // Linux command
+                    } else {
+                        bat "docker build -t ${DOCKER_IMAGE} ."  // Windows command
+                    }
                 }
             }
         }
@@ -28,13 +39,26 @@ pipeline {
                 script {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         // Start the containers using docker-compose
-                        sh 'docker-compose up -d'
+                        if (isUnix()) {
+                            sh 'docker-compose up -d'  // Linux command
+                        } else {
+                            bat 'docker-compose up -d'  // Windows command
+                        }
 
                         // Get the container ID for the temperature_app container
-                        def containerId = sh(script: "docker ps -qf 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()
+                        def containerId
+                        if (isUnix()) {
+                            containerId = sh(script: "docker ps -qf 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()  // Linux command
+                        } else {
+                            containerId = bat(script: "docker ps -qf 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()  // Windows command
+                        }
 
                         // Run tests inside the temperature_app container
-                        sh "docker exec ${containerId} python /app/test_app.py"
+                        if (isUnix()) {
+                            sh "docker exec ${containerId} python /app/test_app.py"  // Linux command
+                        } else {
+                            bat "docker exec ${containerId} python /app/test_app.py"  // Windows command
+                        }
                     }
                 }
             }
@@ -46,7 +70,12 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'docker-compose -f docker-compose.prod.yml up -d'
+                    // Deploy to production using the production docker-compose file
+                    if (isUnix()) {
+                        sh 'docker-compose -f docker-compose.prod.yml up -d'  // Linux command
+                    } else {
+                        bat 'docker-compose -f docker-compose.prod.yml up -d'  // Windows command
+                    }
                 }
             }
         }
@@ -54,7 +83,12 @@ pipeline {
         stage('Teardown') {
             steps {
                 script {
-                    sh 'docker-compose down --volumes --remove-orphans'
+                    // Shutdown and remove containers, networks, volumes, and orphans
+                    if (isUnix()) {
+                        sh 'docker-compose down --volumes --remove-orphans'  // Linux command
+                    } else {
+                        bat 'docker-compose down --volumes --remove-orphans'  // Windows command
+                    }
                 }
             }
         }
@@ -62,7 +96,8 @@ pipeline {
 
     post {
         always {
-            cleanWs() 
+            // Clean the workspace after each build
+            cleanWs()
         }
     }
 }
