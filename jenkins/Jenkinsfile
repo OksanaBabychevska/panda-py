@@ -19,8 +19,10 @@ pipeline {
                 script {
                     if (isUnix()) {
                         sh 'docker-compose down --volumes --remove-orphans'  // Linux command
+                        sh 'docker rmi $(docker images -q) || true'
                     } else {
                         bat 'docker-compose down --volumes --remove-orphans'  // Windows command
+                        bat 'docker rmi $(docker images -q) || true'
                     }
                 }
             }
