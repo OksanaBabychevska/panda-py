@@ -14,7 +14,8 @@ services:
       - grafana                      
     networks:
       - monitoring               
-    restart: always                  
+    restart: always
+    mem_limit: 3g                  
 
   prometheus:
     image: prom/prometheus
