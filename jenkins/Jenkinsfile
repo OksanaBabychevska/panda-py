@@ -14,7 +14,17 @@ pipeline {
                     userRemoteConfigs: [[url: REPO_URL]])
             }
         }
-
+        stage('Stop Existing Containers') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'docker-compose down --volumes --remove-orphans'  // Linux command
+                    } else {
+                        bat 'docker-compose down --volumes --remove-orphans'  // Windows command
+                    }
+                }
+            }
+        }
         stage('Build') {
             steps {
                 script {
