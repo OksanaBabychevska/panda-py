@@ -48,9 +48,9 @@ pipeline {
                         // Get the container ID for the temperature_app container
                         def containerId
                         if (isUnix()) {
-                            containerId = sh(script: "docker ps -qf 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()  // Linux command
+                            containerId = sh(script: "docker ps -q -f 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()
                         } else {
-                            containerId = bat(script: "docker ps -qf 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()  // Windows command
+                            containerId = bat(script: "docker ps -q -f \"name=${DOCKER_IMAGE}\"", returnStdout: true).trim()
                         }
 
                         // Run tests inside the temperature_app container
