@@ -7,5 +7,5 @@ scrape_configs:
       - targets: ['temperature_app:8000'] 
       
 rule_files:
-  - "alert.rules.yml"  
+  - "/app/monitoring/alert.rules.yml" 
 
