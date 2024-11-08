@@ -5,7 +5,7 @@ scrape_configs:
   - job_name: 'temperature_app' 
     metrics_path: /metrics
     static_configs:
-      - targets: ['localhost:8000'] 
+      - targets: ['temperature_app:8000'] 
       
 rule_files:
   - "/app/monitoring/alert.rules.yml" 
