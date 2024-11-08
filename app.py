@@ -5,13 +5,15 @@ import time
 
 app = Flask(__name__)
 
-flask_port = os.getenv('FLASK_PORT', 5000)
-metrics_port = os.getenv('METRICS_PORT', 8000)
+# Задаємо порти для Flask і для метрик
+flask_port = os.getenv('FLASK_PORT', 5000)  # Порт для Flask додатку
+metrics_port = os.getenv('METRICS_PORT', 8000)  # Порт для метрик
 
-# Оголошення метрики для відстеження часу обробки запиту
+# Створення метрики для обробки часу запитів
 REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
 
-@REQUEST_TIME.time()  # Додаємо декоратор для вимірювання часу
+# Обробка основного запиту
+@REQUEST_TIME.time()
 @app.route('/', methods=['GET', 'POST'])
 def index():
     fahrenheit = None  
@@ -26,12 +28,14 @@ def index():
 
     return render_template('index.html', celsius=celsius, fahrenheit=fahrenheit)
 
-# Маршрут для метрик
+# Маршрут для метрик Prometheus
 @app.route('/metrics')
 def metrics():
-    return generate_latest(), 200  # Повертає метрики для Prometheus
+    return generate_latest(), 200
 
-# Основна функція, яка запускає Flask та сервер для метрик
+# Запуск серверу для метрик і Flask додатку
 if __name__ == '__main__':
-    start_http_server(int(metrics_port))  # Порт для метрик (наприклад, 8000)
-    app.run(host='0.0.0.0', port=int(flask_port))  # Порт для Flask додатку (наприклад, 5000)
+    # Запуск HTTP серверу для метрик Prometheus на порту metrics_port
+    start_http_server(int(metrics_port))  
+    # Запуск Flask додатку на порту flask_port
+    app.run(host='0.0.0.0', port=int(flask_port))
