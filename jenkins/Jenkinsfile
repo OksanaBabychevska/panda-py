@@ -39,13 +39,12 @@ pipeline {
             steps {
                 script {
                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                        
-                        sh "docker-compose up -d" 
-                        sleep 5
                         if (isUnix()) {
+                                sh "docker-compose up -d" 
                                 def containerId = sh(script: "docker ps -q -f 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()
                                 sh "docker exec ${containerId} python /app/test_app.py"
                             } else {
+                                bat "docker-compose up -d" 
                                 def containerId = bat(script: "docker ps -q -f \"name=${DOCKER_IMAGE}\"", returnStdout: true).trim()
                                 bat "docker exec ${containerId} python /app/test_app.py"
                             }
